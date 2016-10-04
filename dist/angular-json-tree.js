@@ -91,6 +91,7 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
             scope: {
                 key: '=',
                 value: '=',
+              //  jsonPath: '',
                 startExpanded: '&?'
             },
             compile: function jsonNodeDirectiveCompile(elem) {
@@ -132,6 +133,8 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
                     scope.isExpanded = scope.startExpanded ? scope.startExpanded() : false;
                     scope.toggleExpanded = function jsonNodeDirectiveToggleExpanded() {
                         scope.isExpanded = !scope.isExpanded;
+                        scope.path = scope.path + '/' + scope.key;
+                        console.log(scope.path)
                         if (scope.isExpanded) {
                             elem.addClass('expanded');
                         } else {
