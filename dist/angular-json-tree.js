@@ -80,7 +80,7 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
             scope: {
                 object: '=',
                 startExpanded: '&?',
-                rootName: '&?',
+                rootName: '&?'
             },
             template: '<json-node key="rootName() || \'Object\'" value="object" start-expanded="startExpanded()"></json-node>'
         };
@@ -91,20 +91,19 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
             scope: {
                 key: '=',
                 value: '=',
-              //  jsonPath: '',
                 startExpanded: '&?'
             },
             compile: function jsonNodeDirectiveCompile(elem) {
                 return ajsRecursiveDirectiveHelper.compile(elem, this);
             },
-            template: ' <span class="key" ng-click="toggleExpanded()">{{key}}</span>' +
-                '       <span class="leaf-value" ng-if="!isExpandable">{{value}}</span>' +
+            template: '<div > <span ng-mouseover="onMouseOver()" class="key" ng-click="toggleExpanded()">{{key}}</span>' +
+                '       <span ng-mouseover="onMouseOver()" class="leaf-value" ng-if="!isExpandable">{{value}}</span>' +
                 '       <span class="branch-preview" ng-if="isExpandable" ng-show="!isExpanded" ng-click="toggleExpanded()">{{preview}}</span>' +
                 '       <ul class="branch-value" ng-if="isExpandable && shouldRender" ng-show="isExpanded">' +
-                '           <li ng-repeat="(subkey,subval) in value">' +
+                '           <li  ng-repeat="(subkey,subval) in value">' +
                 '               <json-node key="subkey" value="subval"></json-node>' +
                 '           </li>' +
-                '       </ul>',
+                '       </ul></div>',
             pre: function jsonNodeDirectiveLink(scope, elem, attrs) {
                 // Set value's type as Class for CSS styling
                 elem.addClass(utils.whatClass(scope.value).toLowerCase());
@@ -154,6 +153,96 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
                //     console.log(scope.jsonPath)
                     // Add expandable class for CSS usage
                     elem.addClass('not-expandable');
+                }
+
+                scope.onMouseOver = function jsonNodeDirectiveOnMouseOver() {
+                    var nodes = scope.jsonPath.split("/");
+
+                    var schemas = {
+                        "schemas": [
+                            {
+                                "name": "LighningInteraction",
+                                "type": "record",
+                                "doc": "Interaction schema",
+                                "fields": [
+                                    {
+                                        "name": "version",
+                                        "type": "string",
+                                        "doc": "version field"
+                                    },
+                                    {
+                                        "name": "id",
+                                        "type": "string",
+                                        "doc": "id field"
+                                    },
+                                    {
+                                        "name": "locator",
+                                        "type": "null|locator",
+                                        "doc": "id",
+                                        "fields": [
+                                            {
+                                                "name": "target",
+                                                "type": "string",
+                                                "doc": "target field"
+                                            },
+                                            {
+                                                "name": "scope",
+                                                "type": "string",
+                                                "doc": "scope field"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "LighningPageView",
+                                "type": "record",
+                                "doc": "Pageview schema",
+                                "fields": [
+                                    {
+                                        "name": "version",
+                                        "type": "string",
+                                        "doc": "version field"
+                                    },
+                                    {
+                                        "name": "id",
+                                        "type": "string",
+                                        "doc": "id field"
+                                    },
+                                    {
+                                        "name": "page",
+                                        "type": "null|page",
+                                        "doc": "id",
+                                        "fields": [
+                                            {
+                                                "name": "entity",
+                                                "type": "null|string",
+                                                "doc": "entity field"
+                                            },
+                                            {
+                                                "name": "entityType",
+                                                "type": "null|string",
+                                                "doc": "entityType field"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    };
+
+                    var jsonPathQuery = '';
+                    angular.forEach(nodes, function(node) {
+                        if (node == "Object"){
+                            jsonPathQuery = "$.schemas[?(@.name='LightningInteraction')]"
+                        }else{
+                            jsonPathQuery = jsonPathQuery + ".fields[?(@.name='" + node + "')]";
+                        }
+                    });
+                    scope.schemaDoc = jsonPath(schemas, jsonPathQuery);
+                    var schemaDocString = scope.schemaDoc.name + "    " + scope.schemaDoc.type + "   " + scope.schemaDoc.doc;
+                    console.log( jsonPathQuery)
+                    console.log( scope.schemaDoc)
                 }
             }
         };
