@@ -131,10 +131,14 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
                     }
                     // Setup isExpanded state handling
                     scope.isExpanded = scope.startExpanded ? scope.startExpanded() : false;
+
+                    var parentPath = angular.isUndefined(scope.$parent.jsonPath) ? '' : scope.$parent.jsonPath + '/';
+                    scope.jsonPath = parentPath + scope.key;
+                   // console.log(scope.jsonPath)
                     scope.toggleExpanded = function jsonNodeDirectiveToggleExpanded() {
                         scope.isExpanded = !scope.isExpanded;
-                        scope.path = scope.path + '/' + scope.key;
-                        console.log(scope.path)
+                     //   var jsonPath =  scope.$parent.$parent.$child.key + '/' + scope.key;
+                        console.log(scope.jsonPath)
                         if (scope.isExpanded) {
                             elem.addClass('expanded');
                         } else {
@@ -145,6 +149,9 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
                     };
                 } else {
                     scope.isExpandable = false;
+                    var parentPath = angular.isUndefined(scope.$parent.jsonPath) ? '' : scope.$parent.jsonPath + '/';
+                    scope.jsonPath = parentPath + scope.key;
+               //     console.log(scope.jsonPath)
                     // Add expandable class for CSS usage
                     elem.addClass('not-expandable');
                 }
