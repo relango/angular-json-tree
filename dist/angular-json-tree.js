@@ -157,6 +157,7 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
 
                 scope.onMouseOver = function jsonNodeDirectiveOnMouseOver() {
                     var nodes = scope.jsonPath.split("/");
+                    console.log(scope.jsonPath);
                     var schemasJson = {
                         "schemas": [
                             {
