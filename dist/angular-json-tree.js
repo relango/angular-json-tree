@@ -157,11 +157,10 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
 
                 scope.onMouseOver = function jsonNodeDirectiveOnMouseOver() {
                     var nodes = scope.jsonPath.split("/");
-
-                    var schemas = {
+                    var schemasJson = {
                         "schemas": [
                             {
-                                "name": "LighningInteraction",
+                                "name": "LightningInteraction",
                                 "type": "record",
                                 "doc": "Interaction schema",
                                 "fields": [
@@ -195,7 +194,7 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
                                 ]
                             },
                             {
-                                "name": "LighningPageView",
+                                "name": "LightningPageView",
                                 "type": "record",
                                 "doc": "Pageview schema",
                                 "fields": [
@@ -229,20 +228,24 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
                                 ]
                             }
                         ]
-                    };
+                    }
 
                     var jsonPathQuery = '';
                     angular.forEach(nodes, function(node) {
                         if (node == "Object"){
-                            jsonPathQuery = "$.schemas[?(@.name='LightningInteraction')]"
+                            jsonPathQuery = '$.schemas[?(@.name=="LightningInteraction")]'
                         }else{
-                            jsonPathQuery = jsonPathQuery + ".fields[?(@.name='" + node + "')]";
+                            jsonPathQuery = jsonPathQuery + ".fields[?(@.name=='" + node + "')]";
                         }
                     });
-                    scope.schemaDoc = jsonPath(schemas, jsonPathQuery);
+                    scope.schemaDoc = jsonPath(schemasJson, jsonPathQuery);
+                 //   console.log(scope.schemaDoc)
                     var schemaDocString = scope.schemaDoc.name + "    " + scope.schemaDoc.type + "   " + scope.schemaDoc.doc;
-                    console.log( jsonPathQuery)
-                    console.log( scope.schemaDoc)
+                  //  console.log( jsonPathQuery)
+                    angular.forEach(scope.schemaDoc, function(row) {
+                        console.log( row.name + " , " + row.type + " , " + row.doc)
+                    });
+
                 }
             }
         };
